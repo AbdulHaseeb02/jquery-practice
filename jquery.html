@@ -1,0 +1,172 @@
+<html>
+    <head>
+        <title>
+            Jquery Practice
+        </title>
+
+        <style>
+            table, th{
+            border: 1px solid black;
+            border-collapse: collapse;
+            }
+            .td-class{
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            .display-subject{
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            .delete-icon, .edit-icon, .confirm-icon, .discard-icon{
+                cursor: pointer
+            }
+            .display-none{
+                display: none !important;
+            }
+        </style>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+
+    <body>
+        <div class ="student">
+
+            <form method ="POST" action = "" class= "std" style="text-align: center; margin-top: 2%;">
+                <label>Name</label>
+                <input type="text" id="name" name="name" required><br>
+                
+                <label>Age</label>
+                <input type="number" id="age" name="age" required><br>
+
+                <label>Blood</label>
+                <input type="text" id="blood" name="blood" required><br>
+
+                <div id="textboxDiv">
+                    <label>Subjects</label>
+                    <input type="text" class = "subject" required>
+                    <button type="button" id = "add"> + </button><br>
+                </div>
+                
+                <input type="submit" value="Submit" id="subm" style="margin-top: auto;">
+              </form>     
+        </div>
+
+
+        <div class = "Output">
+            <table id = "output-table">
+                <tr>
+                    <th>Name </th>
+                    <th>Age </th>
+                    <th>Blood Group </th>
+                    <th>Subjects </th>
+                    <th>Actions </th>
+                </tr>
+                
+            </table> 
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script>
+            var boxes=1;
+            var rows=0;
+            $("form").submit(function(event){
+                event.preventDefault();
+                if((boxes > 2 ) && (boxes < 6))
+                {
+                    rows++;
+
+                    var subjects = $(".subject").map(function(){
+                        return $(this).val();
+                    }).get();
+
+                    $("#output-table").append(`<tr class ='tr-class'>
+                            <td class ='td-class'>
+                                <span class="originalText-${rows}" id ='display-name-${rows}'> ${$("#name").val()} </span>
+                                <input class="display-none editBoxes-${rows}" type='text' id='name-edit-${rows}' name='blood' required value = '${$("#name").val()}' data-rows='${rows}'>
+                            </td>
+                            <td class ='td-class'>
+                                <span class="originalText-${rows}" id ='display-age-${rows}'> ${$("#age").val()} </span>
+                                <input class="display-none editBoxes-${rows}" type='number' id='age-edit-${rows}' name='blood' required value = '${$("#age").val()}' data-rows='${rows}'>
+                            </td>
+
+                            <td class ='td-class'>
+                                <span class="originalText-${rows}" id ='display-blood-${rows}'> ${$("#blood").val()} </span>
+                                <input class="display-none editBoxes-${rows}" type='text' id='blood-edit-${rows}' name='blood' required value = '${$("#blood").val()}' data-rows='${rows}'>
+                            </td>
+                            <td class ='display-subject'>
+                                <span class="originalText-${rows}" id ='display-subjects-${rows}'>${subjects.join(', ')}</span>
+                                <input class="display-none editBoxes-${rows}" type='text' id='subjects-edit-${rows}' name='subjects' required value = '${subjects}' data-rows='${rows}'>
+                            </td>
+                            <td class ='td-class'>
+                               <i class="fa fa-pencil-square-o edit-icon originalText-${rows}" aria-hidden="true" id='edit-icon-${rows}'data-rows='${rows}'></i></span>
+                               <i class="fa fa-trash delete-icon originalText-${rows}" aria-hidden="true" id='delete-icon-${rows}' data-rows='${rows}'></i>
+                               <i class="fa fa-check confirm-icon display-none editBoxes-${rows}" aria-hidden="true" id='confirm-icon-${rows}' data-rows='${rows}'></i>
+                               <i class="fa fa-times discard-icon display-none editBoxes-${rows}" aria-hidden="true" id='discard-icon-${rows}'data-rows='${rows}'></i>
+                           </td>
+                        </tr>`
+                    );
+
+                    $("form").trigger("reset");
+                }
+                else
+                    alert("Add 3 to 5 subjects");     
+            });
+
+
+            $("#add").click(function(){
+                if(boxes < 5){
+                    $("#textboxDiv").append(
+                        "<div class = 'appended'><input type='text' class ='subject' required /> <button type='button' class = 'remove'> x </button><br></div>"
+                    );
+                    boxes++;
+                }
+                
+            });
+
+            $(document).on('click','.remove',function(){
+                $(this).parent('div').remove();
+                boxes--;
+            });
+
+            $(document).on('click','.delete-icon',function(){
+                $(this).parents('tr').remove();
+            });
+
+            $(document).on('click','.confirm-icon',function(){
+                var row_number = $(this).attr("data-rows");
+
+                $(`#display-name-${row_number}`).html(`<span id ='display-name-${rows}'> ${$(`#display-name-${row_number}`).val()} </span>`);
+                $(`#display-age-${row_number}`).html(`<span id ='display-age-${rows}'> ${$(`#display-age-${row_number}`).val()} </span>`);
+                $(`#display-blood-${row_number}`).html(`<span id ='display-blood-${rows}'> ${$(`#display-blood-${row_number}`).val()} </span>`);
+                $(`#display-subjects-${row_number}`).html(`<span id ='display-subjects-${rows}'> ${$(`#display-subjects-${row_number}`).val()}</span>`);
+
+                $(`.originalText-${row_number}`).removeClass('display-none'); 
+                $(`.editBoxes-${row_number}`).addClass('display-none');
+
+            });
+
+            $(document).on('click','.discard-icon',function(){
+                var row_number = $(this).attr("data-rows");
+  
+                $(`.originalText-${row_number}`).removeClass('display-none'); 
+                $(`.editBoxes-${row_number}`).addClass('display-none');
+
+                $(`#name-edit-${row_number}`).val($(`#display-name-${row_number}`).html());
+                $(`#age-edit-${row_number}`).val(parseInt($(`#display-age-${row_number}`).html()));
+                $(`#blood-edit-${row_number}`).val($(`#display-blood-${row_number}`).html());
+                $(`#subjects-edit-${row_number}`).val($(`#display-subjects-${row_number}`).html());
+
+            });
+
+            $(document).on('click','.edit-icon',function(){
+
+                row_number = $(this).data("rows");
+ 
+                $(`.originalText-${row_number}`).addClass('display-none'); 
+                $(`.editBoxes-${row_number}`).removeClass('display-none');
+            });
+
+        </script>    
+
+    </body>
+</html>
